@@ -1,4 +1,3 @@
-// src/items/items.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -25,7 +24,7 @@ export class ItemsService {
     });
   }
 
-  async create(dto: CreateItemDto) {
+  async create(dto: CreateItemDto, publisherId: string) {
     return this.prisma.item.create({
       data: {
         type: dto.type,
@@ -37,7 +36,7 @@ export class ItemsService {
         contactName: dto.contactName,
         contactPhone: dto.contactPhone,
         contactWechat: dto.contactWechat,
-        publisherId: dto.publisherId,
+        publisherId,
         status: 'published',
       },
       include: {

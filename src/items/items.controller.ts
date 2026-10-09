@@ -1,7 +1,9 @@
-// src/items/items.controller.ts
-import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
+import {
+  Controller, Get, Post, Patch, Body, Param, UseGuards, Req,
+} from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('api/items')
 export class ItemsController {
@@ -18,11 +20,13 @@ export class ItemsController {
   }
 
   @Post()
-  create(@Body() dto: CreateItemDto) {
-    return this.itemsService.create(dto);
+  @UseGuards(JwtAuthGuard)
+  create(@Body() dto: CreateItemDto, @Req() req: any) {
+    return this.itemsService.create(dto, req.user.id);
   }
 
   @Patch(':id/resolve')
+  @UseGuards(JwtAuthGuard)
   resolve(@Param('id') id: string) {
     return this.itemsService.resolve(id);
   }

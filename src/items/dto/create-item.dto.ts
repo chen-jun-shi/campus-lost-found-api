@@ -54,7 +54,5 @@ export class CreateItemDto {
   @IsString()
   contactWechat?: string;
 
-  // 暂时由前端传（后续登录后从 JWT 取）
-  @IsString()
-  publisherId: string;
+  
 }
