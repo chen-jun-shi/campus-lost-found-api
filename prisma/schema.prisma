@@ -46,6 +46,7 @@ model User {
   phone     String?
   wechat    String?
   avatar    String?
+  role      String   @default("user")  // 👈 新增这一行
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -1,5 +1,6 @@
+// src/items/items.controller.ts
 import {
-  Controller, Get, Post, Patch, Body, Param, UseGuards, Req,
+  Controller, Get, Post, Patch, Delete, Body, Param, UseGuards, Req,
 } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -29,5 +30,12 @@ export class ItemsController {
   @UseGuards(JwtAuthGuard)
   resolve(@Param('id') id: string) {
     return this.itemsService.resolve(id);
+  }
+
+  // 👇 新增：删除
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id') id: string, @Req() req: any) {
+    return this.itemsService.remove(id, req.user.id);
   }
 }

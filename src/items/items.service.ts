@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+// src/items/items.service.ts
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto';
 
@@ -36,7 +37,7 @@ export class ItemsService {
         contactName: dto.contactName,
         contactPhone: dto.contactPhone,
         contactWechat: dto.contactWechat,
-        images: dto.images ?? [],  // 👈 新增
+        images: dto.images ?? [],
         publisherId,
         status: 'published',
       },
@@ -57,5 +58,26 @@ export class ItemsService {
         publisher: { select: { id: true, name: true, avatar: true } },
       },
     });
+  }
+
+  // 👇 新增：删除（仅 admin 或发布者本人可删）
+  async remove(id: string, userId: string) {
+    const item = await this.prisma.item.findUnique({ where: { id } });
+    if (!item) throw new NotFoundException('信息不存在');
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true },
+    });
+
+    const isAdmin = user?.role === 'admin';
+    const isOwner = item.publisherId === userId;
+
+    if (!isAdmin && !isOwner) {
+      throw new ForbiddenException('你没有权限删除这条信息');
+    }
+
+    await this.prisma.item.delete({ where: { id } });
+    return { success: true };
   }
 }
