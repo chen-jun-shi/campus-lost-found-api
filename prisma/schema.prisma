@@ -1,0 +1,93 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ 枚举类型 ============
+
+// 信息类型：寻物 / 招领
+enum ItemType {
+  lost
+  found
+}
+
+// 物品分类
+enum ItemCategory {
+  card
+  phone
+  wallet
+  book
+  key
+  clothing
+  other
+}
+
+// 信息状态
+enum ItemStatus {
+  pending
+  published
+  resolved
+  rejected
+}
+
+// ============ 用户表 ============
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  phone     String?
+  wechat    String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 关系：一个用户可以发布多条信息
+  items Item[]
+
+  @@map("users")
+}
+
+// ============ 失物/招领信息表 ============
+
+model Item {
+  id          String       @id @default(cuid())
+  type        ItemType
+  title       String
+  category    ItemCategory
+  description String
+  images      String[]     @default([])
+  location    String
+  happenTime  DateTime
+
+  // 联系方式（冗余存储，避免每次查询都联表）
+  contactName   String
+  contactPhone  String?
+  contactWechat String?
+
+  status ItemStatus @default(published)
+
+  // 商业化字段
+  views  Int     @default(0)
+  isTop  Boolean @default(false)
+  bounty Int?
+
+  // 发布者（外键）
+  publisherId String
+  publisher   User   @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type, status])
+  @@index([category])
+  @@index([publisherId])
+  @@map("items")
+}
