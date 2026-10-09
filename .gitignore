@@ -59,3 +59,8 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /src/generated/prisma
+# AI agent skills (Prisma RC 残留)
+.agents/
+.claude/
+.cursor/
+.devin/

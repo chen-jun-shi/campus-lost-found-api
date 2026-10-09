@@ -1,20 +1,24 @@
 // src/items/items.controller.ts
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ItemsService } from './items.service';
+import { CreateItemDto } from './dto/create-item.dto';
 
-@Controller('api/items')  // 路由前缀：/api/items
+@Controller('api/items')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
-  // GET /api/items
   @Get()
   findAll() {
     return this.itemsService.findAll();
   }
 
-  // GET /api/items/:id
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.itemsService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() dto: CreateItemDto) {
+    return this.itemsService.create(dto);
   }
 }
