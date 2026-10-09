@@ -34,7 +34,7 @@ export class UploadController {
     if (!file) throw new BadRequestException('请选择文件');
 
     return {
-      url: `http://localhost:3001/uploads/${file.filename}`,
+      url: `/uploads/${file.filename}`,  // 👈 改成相对路径
       filename: file.filename,
       size: file.size,
     };
