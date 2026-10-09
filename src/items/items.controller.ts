@@ -1,5 +1,5 @@
 // src/items/items.controller.ts
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { CreateItemDto } from './dto/create-item.dto';
 
@@ -20,5 +20,10 @@ export class ItemsController {
   @Post()
   create(@Body() dto: CreateItemDto) {
     return this.itemsService.create(dto);
+  }
+
+  @Patch(':id/resolve')
+  resolve(@Param('id') id: string) {
+    return this.itemsService.resolve(id);
   }
 }

@@ -1,5 +1,5 @@
 // src/items/items.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateItemDto } from './dto/create-item.dto';
 
@@ -40,6 +40,19 @@ export class ItemsService {
         publisherId: dto.publisherId,
         status: 'published',
       },
+      include: {
+        publisher: { select: { id: true, name: true, avatar: true } },
+      },
+    });
+  }
+
+  async resolve(id: string) {
+    const item = await this.prisma.item.findUnique({ where: { id } });
+    if (!item) throw new NotFoundException('信息不存在');
+
+    return this.prisma.item.update({
+      where: { id },
+      data: { status: 'resolved' },
       include: {
         publisher: { select: { id: true, name: true, avatar: true } },
       },
