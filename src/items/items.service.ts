@@ -36,6 +36,7 @@ export class ItemsService {
         contactName: dto.contactName,
         contactPhone: dto.contactPhone,
         contactWechat: dto.contactWechat,
+        images: dto.images ?? [],  // 👈 新增
         publisherId,
         status: 'published',
       },

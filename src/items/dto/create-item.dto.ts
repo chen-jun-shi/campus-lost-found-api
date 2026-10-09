@@ -1,6 +1,6 @@
 // src/items/dto/create-item.dto.ts
 import {
-  IsEnum, IsString, MinLength, MaxLength, IsOptional, IsDateString,
+  IsEnum, IsString, MinLength, MaxLength, IsOptional, IsDateString, IsArray,
 } from 'class-validator';
 
 export enum ItemType {
@@ -54,5 +54,8 @@ export class CreateItemDto {
   @IsString()
   contactWechat?: string;
 
-  
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  images?: string[];
 }
